@@ -21,18 +21,22 @@ from itshop.settings import MEDIA_ROOT
 from django.views.static import serve
 from rest_framework.documentation import include_docs_urls
 from rest_framework.routers import DefaultRouter
+from rest_framework.authtoken import views
 
 
-from goods.views import GoodsListViewSet
+from goods.views import GoodsListViewSet,CategoryViewSet
 
 router = DefaultRouter()
-router.register(r'goods',GoodsListViewSet)
+router.register(r'goods', GoodsListViewSet)
+router.register(r'category',CategoryViewSet)
 
 
 urlpatterns = [
+    # url(r'^goods/$', GoodsListViewSet.as_view({'get': 'list'})),
+    url(r'^api/', include(router.urls)),
     url(r'^xadmin/', xadmin.site.urls),
     url(r'^media/(?P<path>.*)$',serve,{'document_root':MEDIA_ROOT}),
-    url(r'^docs/$',include_docs_urls(title='itshop')),
+    url(r'^api-token-auth/',views.obtain_auth_token),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^',include(router.urls)),
+    url(r'docs',include_docs_urls(title='itshop')),
 ]
